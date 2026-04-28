@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os/exec"
+	"os"
 	"runtime"
 	"strconv"
 	"strings"
@@ -140,5 +140,5 @@ func getMemoryInfo() (uint64, uint64) {
 }
 
 func osReadFile(path string) ([]byte, error) {
-	return exec.Command("cat", path).Output()
+	return os.ReadFile(path)
 }

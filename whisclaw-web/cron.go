@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type CronJob struct {
 }
 
 var cronJobs []CronJob
+var cronMutex sync.Mutex
 
 func handleCron(w http.ResponseWriter, r *http.Request) {
 	cronFile := filepath.Join(os.Getenv("HOME"), ".whisclaw", "cron.json")
@@ -60,6 +62,8 @@ func handleCron(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadCronJobs(path string) error {
+	cronMutex.Lock()
+	defer cronMutex.Unlock()
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -71,6 +75,8 @@ func loadCronJobs(path string) error {
 }
 
 func saveCronJobs(path string) error {
+	cronMutex.Lock()
+	defer cronMutex.Unlock()
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return err

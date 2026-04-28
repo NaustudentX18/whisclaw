@@ -6,14 +6,28 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"time"
+	"strings"
+	"sync"
 
 	"github.com/gorilla/websocket"
 )
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
-		return true
+		origin := r.Header.Get("Origin")
+		if origin == "" {
+			return true
+		}
+		// Allow localhost and private LAN origins
+		u, err := url.Parse(origin)
+		if err != nil {
+			return false
+		}
+		host := u.Hostname()
+		return host == "localhost" || host == "127.0.0.1" || host == "::1" ||
+			host == "localhost" || strings.HasPrefix(host, "192.168.") ||
+			host == "10.0.0.1" || strings.HasPrefix(host, "10.") ||
+			host == "172.16.0.1" || strings.HasPrefix(host, "172.")
 	},
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -51,15 +65,18 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	defer browserConn.Close()
 
 	done := make(chan struct{})
+	var doneOnce sync.Once
+	closeDone := func() { doneOnce.Do(func() { close(done) }) }
 
 	go func() {
 		for {
 			_, msg, err := browserConn.ReadMessage()
 			if err != nil {
-				close(done)
+				closeDone()
 				return
 			}
 			if err := gatewayConn.WriteMessage(websocket.TextMessage, msg); err != nil {
+				closeDone()
 				return
 			}
 		}
@@ -69,10 +86,11 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 		for {
 			_, msg, err := gatewayConn.ReadMessage()
 			if err != nil {
-				close(done)
+				closeDone()
 				return
 			}
 			if err := browserConn.WriteMessage(websocket.TextMessage, msg); err != nil {
+				closeDone()
 				return
 			}
 		}
@@ -86,25 +104,3 @@ func init() {
 	flag.String("gateway-port", "18889", "WhisClaw gateway port")
 }
 
-func relayMessages(browserConn, gatewayConn *websocket.Conn, done chan struct{}) {
-	for {
-		select {
-		case <-done:
-			return
-		default:
-			gatewayConn.SetReadDeadline(time.Now().Add(60 * time.Second))
-			_, msg, err := gatewayConn.ReadMessage()
-			if err != nil {
-				return
-			}
-			if err := browserConn.WriteMessage(websocket.TextMessage, msg); err != nil {
-				return
-			}
-		}
-	}
-}
-
-type WebSocketMessage struct {
-	Type    string `json:"type"`
-	Payload string `json:"payload"`
-}

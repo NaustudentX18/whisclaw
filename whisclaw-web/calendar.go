@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -21,6 +22,7 @@ type CalendarEvent struct {
 }
 
 var calendarEvents []CalendarEvent
+var calendarMutex sync.Mutex
 
 func handleCalendar(w http.ResponseWriter, r *http.Request) {
 	calendarFile := filepath.Join(os.Getenv("HOME"), ".whisclaw", "calendar.json")
@@ -59,6 +61,8 @@ func handleCalendar(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadCalendarEvents(path string) error {
+	calendarMutex.Lock()
+	defer calendarMutex.Unlock()
 	data, err := os.ReadFile(path)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -70,6 +74,8 @@ func loadCalendarEvents(path string) error {
 }
 
 func saveCalendarEvents(path string) error {
+	calendarMutex.Lock()
+	defer calendarMutex.Unlock()
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0755); err != nil {
 		return err
