@@ -59,13 +59,17 @@ fi
 
 # Build whisclaw-web server
 echo "Building whisclaw-web server..."
-if [ -d ~/whisclaw/whisclaw-web ]; then
-    cd ~/whisclaw/whisclaw-web
-    go build -o /usr/local/bin/whisclaw-web .
-    echo "whisclaw-web built successfully"
-else
-    echo "whisclaw-web directory not found, skipping build"
+if [ ! -d ~/whisclaw/whisclaw-web ]; then
+    echo "Error: whisclaw-web directory not found"
+    exit 1
 fi
+
+cd ~/whisclaw/whisclaw-web
+if ! go build -o /usr/local/bin/whisclaw-web .; then
+    echo "Error: Failed to build whisclaw-web"
+    exit 1
+fi
+echo "whisclaw-web built successfully"
 
 # Create default config.json with dual-backend support
 echo "Creating default config.json..."
@@ -90,10 +94,10 @@ cat > ~/.whisclaw/config.json << 'CONFIG'
         "port": 8080
     },
     "whisclaw": {
-        "data_dir": "~/.whisclaw/data",
-        "cache_dir": "~/.whisclaw/cache",
-        "logs_dir": "~/.whisclaw/logs",
-        "skills_dir": "~/.whisclaw/skills"
+        "data_dir": "$HOME/.whisclaw/data",
+        "cache_dir": "$HOME/.whisclaw/cache",
+        "logs_dir": "$HOME/.whisclaw/logs",
+        "skills_dir": "$HOME/.whisclaw/skills"
     }
 }
 CONFIG
