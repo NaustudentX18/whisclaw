@@ -1,0 +1,20 @@
+[Unit]
+Description=WhisClaw Mission Control
+Documentation=https://github.com/NaustudentX18/whisclaw
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi
+ExecStart=/usr/local/bin/whisclaw-web --config /home/pi/.whisclaw/config.json
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=whisclaw
+Environment=HOME=/home/pi
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=multi-user.target
