@@ -51,7 +51,7 @@ echo "Cloning/updating WhisClaw repo..."
 if [ -d ~/whisclaw/.git ]; then
     echo "Updating existing WhisClaw repo..."
     cd ~/whisclaw
-    git pull origin main 2>/dev/null || git pull origin master 2>/dev/null
+    git pull origin main || git pull origin master || echo "Warning: git pull failed, continuing with existing code"
 else
     git clone https://github.com/NaustudentX18/whisclaw.git ~/whisclaw
     cd ~/whisclaw
@@ -74,7 +74,7 @@ echo "whisclaw-web built successfully"
 # Create default config.json with dual-backend support
 echo "Creating default config.json..."
 mkdir -p ~/.whisclaw
-cat > ~/.whisclaw/config.json << 'CONFIG'
+cat > ~/.whisclaw/config.json << CONFIG
 {
     "backends": {
         "minimax": {
@@ -106,16 +106,16 @@ CONFIG
 echo "Creating systemd service..."
 mkdir -p ~/.config/systemd/user
 
-cat > ~/.config/systemd/user/whisclaw.service << 'SERVICE'
+cat > ~/.config/systemd/user/whisclaw.service << SERVICE
 [Unit]
 Description=WhisClaw Mission Control
 After=network.target
 
 [Service]
 Type=simple
-Environment=PATH=/usr/local/go/bin:/usr/local/bin:$PATH
-Environment=HOME=/home/$USER
-ExecStart=/usr/local/bin/whisclaw-web --config ~/.whisclaw/config.json
+Environment=PATH=/usr/local/go/bin:/usr/local/bin:%h/.local/bin:$PATH
+Environment=HOME=%h
+ExecStart=/usr/local/bin/whisclaw-web --config %h/.whisclaw/config.json
 Restart=always
 RestartSec=3
 StandardOutput=append:%h/.whisclaw/logs/whisclaw.log
