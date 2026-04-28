@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f0f14">
+    <title>WhisClaw - Captain Snips</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">&#128008;</span>
+                <span class="logo-text">Captain Snips</span>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot" id="ws-status"></span>
+            </div>
+        </header>
+
+        <!-- Main Content Panels -->
+        <main class="app-main">
+            <!-- Chat Panel -->
+            <section class="panel" id="chat-panel">
+                <div class="panel-header">
+                    <h2>Chat</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <form class="chat-input-form" id="chat-form">
+                        <input type="text" id="chat-input" placeholder="Message WhisClaw..." autocomplete="off">
+                        <button type="submit" class="btn btn-primary">Send</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- System Panel -->
+            <section class="panel hidden" id="system-panel">
+                <div class="panel-header">
+                    <h2>System</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="system-grid" id="system-grid">
+                        <div class="system-card">
+                            <div class="card-icon">&#128267;</div>
+                            <div class="card-label">Battery</div>
+                            <div class="card-value" id="battery-value">--</div>
+                        </div>
+                        <div class="system-card">
+                            <div class="card-icon">&#128200;</div>
+                            <div class="card-label">CPU Temp</div>
+                            <div class="card-value" id="cpu-temp-value">--</div>
+                        </div>
+                        <div class="system-card">
+                            <div class="card-icon">&#128203;</div>
+                            <div class="card-label">Memory</div>
+                            <div class="card-value" id="memory-value">--</div>
+                        </div>
+                        <div class="system-card">
+                            <div class="card-icon">&#128337;</div>
+                            <div class="card-label">Uptime</div>
+                            <div class="card-value" id="uptime-value">--</div>
+                        </div>
+                    </div>
+                    <div class="system-actions">
+                        <button class="btn btn-warning" id="restart-btn">Restart</button>
+                        <button class="btn btn-danger" id="shutdown-btn">Shutdown</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cron Panel -->
+            <section class="panel hidden" id="cron-panel">
+                <div class="panel-header">
+                    <h2>Cron Jobs</h2>
+                </div>
+                <div class="panel-content">
+                    <form class="add-form" id="cron-form">
+                        <input type="text" id="cron-name" placeholder="Job name" required>
+                        <input type="text" id="cron-command" placeholder="Command" required>
+                        <input type="text" id="cron-schedule" placeholder="Schedule (e.g., */5 * * * *)" required>
+                        <button type="submit" class="btn btn-primary">Add Job</button>
+                    </form>
+                    <div class="job-list" id="cron-jobs"></div>
+                </div>
+            </section>
+
+            <!-- Calendar Panel -->
+            <section class="panel hidden" id="calendar-panel">
+                <div class="panel-header">
+                    <h2>Calendar</h2>
+                </div>
+                <div class="panel-content">
+                    <div class="calendar-nav">
+                        <button class="btn btn-icon" id="prev-month">&lt;</button>
+                        <span id="calendar-title">April 2026</span>
+                        <button class="btn btn-icon" id="next-month">&gt;</button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                    <form class="add-form" id="event-form">
+                        <input type="date" id="event-date" required>
+                        <input type="text" id="event-title" placeholder="Event title" required>
+                        <button type="submit" class="btn btn-primary">Add Event</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Config Panel -->
+            <section class="panel hidden" id="config-panel">
+                <div class="panel-header">
+                    <h2>Configuration</h2>
+                </div>
+                <div class="panel-content">
+                    <form class="config-form" id="config-form">
+                        <div class="form-group">
+                            <label for="backend-select">Backend</label>
+                            <select id="backend-select" required>
+                                <option value="openai">OpenAI</option>
+                                <option value="anthropic">Anthropic</option>
+                                <option value="gemini">Gemini</option>
+                                <option value="ollama">Ollama</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="api-key-input">API Key</label>
+                            <input type="password" id="api-key-input" placeholder="Enter API key" minlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="model-input">Model</label>
+                            <input type="text" id="model-input" placeholder="Model name (e.g., gpt-4o)">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Config</button>
+                    </form>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Tab Navigation (Mobile) -->
+        <nav class="bottom-nav" id="bottom-nav">
+            <button class="nav-tab active" data-panel="chat">
+                <span class="nav-icon">&#128172;</span>
+                <span class="nav-label">Chat</span>
+            </button>
+            <button class="nav-tab" data-panel="system">
+                <span class="nav-icon">&#128187;</span>
+                <span class="nav-label">System</span>
+            </button>
+            <button class="nav-tab" data-panel="cron">
+                <span class="nav-icon">&#128337;</span>
+                <span class="nav-label">Cron</span>
+            </button>
+            <button class="nav-tab" data-panel="calendar">
+                <span class="nav-icon">&#128197;</span>
+                <span class="nav-label">Calendar</span>
+            </button>
+            <button class="nav-tab" data-panel="config">
+                <span class="nav-icon">&#9881;</span>
+                <span class="nav-label">Config</span>
+            </button>
+        </nav>
+
+        <!-- Sidebar Navigation (Desktop) -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-icon">&#128008;</span>
+                <span class="logo-text">WhisClaw</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-panel="chat">
+                    <span class="nav-icon">&#128172;</span>
+                    <span class="nav-label">Chat</span>
+                </button>
+                <button class="nav-item" data-panel="system">
+                    <span class="nav-icon">&#128187;</span>
+                    <span class="nav-label">System</span>
+                </button>
+                <button class="nav-item" data-panel="cron">
+                    <span class="nav-icon">&#128337;</span>
+                    <span class="nav-label">Cron</span>
+                </button>
+                <button class="nav-item" data-panel="calendar">
+                    <span class="nav-icon">&#128197;</span>
+                    <span class="nav-label">Calendar</span>
+                </button>
+                <button class="nav-item" data-panel="config">
+                    <span class="nav-icon">&#9881;</span>
+                    <span class="nav-label">Config</span>
+                </button>
+            </nav>
+        </aside>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="chat.js"></script>
+    <script src="config.js"></script>
+    <script src="cron.js"></script>
+    <script src="calendar.js"></script>
+    <script src="system.js"></script>
+</body>
+</html>
