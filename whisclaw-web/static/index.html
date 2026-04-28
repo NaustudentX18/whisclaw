@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhisClaw Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main class="app-container">
+    <!-- Chat Panel -->
+    <section id="chat-panel" class="panel" aria-label="Chat">
+      <div class="chat-header">
+        <img src="assets/placeholder.svg" alt="Captain Snips" class="captain-snips" width="48" height="48">
+        <h2>WhisClaw Chat</h2>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <form id="chat-form" class="chat-input-container">
+        <input
+          type="text"
+          id="chat-input"
+          placeholder="Speak to WhisClaw..."
+          autocomplete="off"
+          aria-label="Chat message"
+        >
+        <button type="submit" class="send-btn" aria-label="Send message">Send</button>
+      </form>
+    </section>
+
+    <!-- System Panel -->
+    <section id="system-panel" class="panel hidden" aria-label="System Status">
+      <h2>System Status</h2>
+      <div id="system-stats" class="stats-grid"></div>
+    </section>
+
+    <!-- Cron Panel -->
+    <section id="cron-panel" class="panel hidden" aria-label="Cron Jobs">
+      <h2>Cron Jobs</h2>
+      <form id="add-cron-form" class="add-form">
+        <input type="text" id="cron-name" placeholder="Job name" required>
+        <input type="text" id="cron-schedule" placeholder="* * * * *" required>
+        <input type="text" id="cron-command" placeholder="Command" required>
+        <button type="submit">Add Job</button>
+      </form>
+      <div id="cron-list" class="cron-list"></div>
+    </section>
+
+    <!-- Calendar Panel -->
+    <section id="calendar-panel" class="panel hidden" aria-label="Calendar">
+      <h2>Calendar</h2>
+      <div class="calendar-nav">
+        <button id="prev-month" aria-label="Previous month">&lt;</button>
+        <span id="current-month"></span>
+        <button id="next-month" aria-label="Next month">&gt;</button>
+      </div>
+      <div id="calendar-grid" class="calendar-grid"></div>
+      <button id="add-event-btn" class="add-event-btn">Add Event</button>
+      <div id="event-modal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Add Event</h3>
+          <form id="add-event-form">
+            <input type="text" id="event-title" placeholder="Event title" required>
+            <input type="date" id="event-date" required>
+            <input type="time" id="event-time" placeholder="Time (optional)">
+            <textarea id="event-description" placeholder="Description (optional)"></textarea>
+            <div class="modal-buttons">
+              <button type="button" id="cancel-event">Cancel</button>
+              <button type="submit">Save</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Config Panel -->
+    <section id="config-panel" class="panel hidden" aria-label="Configuration">
+      <h2>Configuration</h2>
+      <form id="config-form" class="config-form">
+        <div class="form-group">
+          <label for="config-backend">Backend URL</label>
+          <input type="text" id="config-backend" placeholder="http://localhost:8080">
+        </div>
+        <div class="form-group">
+          <label for="config-model">Model</label>
+          <input type="text" id="config-model" placeholder="Model name">
+        </div>
+        <div class="form-group">
+          <label for="config-api-url">API URL</label>
+          <input type="text" id="config-api-url" placeholder="https://api.example.com">
+        </div>
+        <button type="submit" class="save-btn">Save Configuration</button>
+      </form>
+      <div id="toast" class="toast hidden"></div>
+    </section>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav id="bottom-nav" class="bottom-nav">
+      <button class="tab-btn active" data-panel="chat" aria-label="Chat">
+        <span class="tab-icon">C</span>
+        <span class="tab-label">Chat</span>
+      </button>
+      <button class="tab-btn" data-panel="system" aria-label="System">
+        <span class="tab-icon">S</span>
+        <span class="tab-label">System</span>
+      </button>
+      <button class="tab-btn" data-panel="cron" aria-label="Cron">
+        <span class="tab-icon">R</span>
+        <span class="tab-label">Cron</span>
+      </button>
+      <button class="tab-btn" data-panel="calendar" aria-label="Calendar">
+        <span class="tab-icon">Cal</span>
+        <span class="tab-label">Calendar</span>
+      </button>
+      <button class="tab-btn" data-panel="config" aria-label="Config">
+        <span class="tab-icon">Cfg</span>
+        <span class="tab-label">Config</span>
+      </button>
+    </nav>
+  </main>
+
+  <script src="js/app.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/system.js"></script>
+  <script src="js/cron.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/config.js"></script>
+</body>
+</html>

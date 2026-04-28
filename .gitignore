@@ -1,0 +1,16 @@
+# Binary
+whisclaw-web/whisclaw-web
+
+# Logs
+whisclaw-logs/
+*.log
+
+# Env with secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+vendor/

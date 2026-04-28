@@ -1,0 +1,17 @@
+[Unit]
+Description=WhisClaw Web Dashboard
+After=network.target picoclaw.service
+Wants=picoclaw.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/pi/whisclaw-web
+ExecStart=/home/pi/whisclaw-web/whisclaw-web
+Restart=always
+RestartSec=3
+Environment=PATH=/home/pi/.local/bin:/usr/local/bin:/usr/bin:/bin
+StandardOutput=append:/home/pi/whisclaw-logs/whisclaw.log
+StandardError=append:/home/pi/whisclaw-logs/whisclaw.err.log
+
+[Install]
+WantedBy=default.target
